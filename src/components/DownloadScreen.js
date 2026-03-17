@@ -92,6 +92,7 @@ export default function DownloadScreen() {
       {/* Título */}
       <Text style={styles.title}>YT MP3 Downloader</Text>
       <Text style={styles.subtitle}>Convierte YouTube a MP3</Text>
+      <Text style={styles.welcome}>¡Bienvenido! Pega una URL de YouTube y descarga tu MP3 gratis.</Text>
 
       {/* Estado: idle */}
       {status === "idle" && (
@@ -231,5 +232,11 @@ const styles = StyleSheet.create({
     color: "#888",
     fontSize: 14,
     textDecorationLine: "underline",
+  },
+  welcome: {
+    fontSize: 12,
+    color: "#555",
+    textAlign: "center",
+    marginBottom: 32,
   },
 });
