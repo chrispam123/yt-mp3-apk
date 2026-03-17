@@ -1,0 +1,27 @@
+# =============================================================================
+# .pre-commit-config.yaml
+# Hooks que se ejecutan automáticamente antes de cada commit.
+# Si alguno falla el commit se bloquea.
+# =============================================================================
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      # Evita commitear claves privadas o credenciales accidentalmente
+      - id: detect-private-key
+      # Verifica que los archivos JSON son válidos
+      - id: check-json
+      # Elimina espacios en blanco al final de las líneas
+      - id: trailing-whitespace
+      # Asegura que los archivos terminan con una línea en blanco
+      - id: end-of-file-fixer
+
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v8.57.0
+    hooks:
+      - id: eslint
+        files: \.(js|jsx)$
+        additional_dependencies:
+          - eslint@8.57.0
+          - eslint-config-expo
