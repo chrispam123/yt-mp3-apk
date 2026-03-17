@@ -1,0 +1,50 @@
+# =============================================================================
+# cd.yml
+# Pipeline de CD que se ejecuta MANUALMENTE desde GitHub Actions.
+# Publica una nueva versión de la app en Expo EAS.
+# Solo debe ejecutarse desde la rama main después de un PR aprobado.
+# =============================================================================
+
+name: CD
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Entorno de despliegue'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # JOB 1: Build y publicación en Expo EAS
+  # ---------------------------------------------------------------------------
+  expo-deploy:
+    name: Expo Deploy
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Instalar EAS CLI
+        run: npm install -g eas-cli
+
+      - name: Publicar update en Expo EAS
+        run: eas update --auto
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}

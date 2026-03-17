@@ -1,0 +1,63 @@
+# =============================================================================
+# ci.yml
+# Pipeline de CI que se ejecuta automáticamente en cada PR hacia develop y main.
+# Si algún paso falla el PR queda bloqueado hasta que se corrija.
+# =============================================================================
+
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+  push:
+    branches:
+      - develop
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # JOB 1: Calidad del código JavaScript
+  # ---------------------------------------------------------------------------
+  code-quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Ejecutar ESLint
+        run: npx eslint src/ App.js
+
+  # ---------------------------------------------------------------------------
+  # JOB 2: Verificar que Expo puede compilar sin errores
+  # ---------------------------------------------------------------------------
+  expo-check:
+    name: Expo Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Verificar tipos y exports
+        run: npx expo-doctor
