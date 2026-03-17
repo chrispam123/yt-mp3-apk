@@ -29,7 +29,11 @@ export const startDownload = async (url) => {
 // Devuelve { status, url?, message }
 // -----------------------------------------------------------------------------
 export const getTaskStatus = async (taskId) => {
-  const response = await apiClient.get(`/status/${taskId}`);
+  const response = await apiClient.get(`/status/${taskId}`, {
+    validateStatus: (status) => status < 500,
+    params: { t: Date.now() },
+    headers: { "Cache-Control": "no-cache", "Pragma": "no-cache" }
+  });
   return response.data;
 };
 
@@ -42,7 +46,7 @@ export const pollTaskStatus = (taskId, onUpdate) => {
 
   const interval = setInterval(async () => {
     attempts++;
-
+    console.log(`Polling intento ${attempts} para tarea ${taskId}`);
     try {
       const data = await getTaskStatus(taskId);
       onUpdate(data);
@@ -56,8 +60,8 @@ export const pollTaskStatus = (taskId, onUpdate) => {
         onUpdate({ status: "error", message: "Tiempo de espera agotado" });
       }
     } catch (_error) {
-      clearInterval(interval);
-      onUpdate({ status: "error", message: "Error de conexión con el servidor" });
+        // Error temporal, puede ser Fargate arrancando, continuamos
+     console.log("Polling reintentando...");
     }
   }, POLLING_INTERVAL_MS);
 
