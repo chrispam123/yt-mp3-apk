@@ -48,6 +48,9 @@ jobs:
       - name: Instalar dependencias
         run: npm install
 
+      - name: Instalar EAS CLI
+        run: npm install -g eas-cli
+
       - name: Publicar actualización OTA
         run: eas update --auto --non-interactive
         env:
