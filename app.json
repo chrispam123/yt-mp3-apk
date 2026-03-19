@@ -15,14 +15,18 @@
       "supportsTablet": true
     },
     "android": {
-      	"package": "com.chrisomar.ytmp3apk",
-	"adaptiveIcon": {
+      "package": "com.chrisomar.ytmp3apk",
+      "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
         "android.permission.RECORD_AUDIO",
         "android.permission.MODIFY_AUDIO_SETTINGS",
         "android.permission.FOREGROUND_SERVICE",
@@ -41,6 +45,12 @@
         "projectId": "7764bd04-1c72-46b7-b405-e1d85980d9f2"
       }
     },
-    "owner": "chrisomar"
+    "owner": "chrisomar",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/7764bd04-1c72-46b7-b405-e1d85980d9f2"
+    }
   }
 }
