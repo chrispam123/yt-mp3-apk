@@ -1,31 +1,67 @@
+
 # =============================================================================
 # cd.yml
-# Pipeline de CD que se ejecuta MANUALMENTE desde GitHub Actions.
-# Publica una nueva versión de la app en Expo EAS.
-# Solo debe ejecutarse desde la rama main después de un PR aprobado.
+# Pipeline de CD para la app móvil yt-mp3-apk.
+# Dos jobs separados:
+# 1. update: actualización OTA automática en cada merge a main (JS changes)
+# 2. build:  compilación de APK manual cuando hay cambios nativos
 # =============================================================================
 
 name: CD
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
-      environment:
-        description: 'Entorno de despliegue'
+      job:
+        description: 'Job a ejecutar'
         required: true
-        default: 'dev'
+        default: 'update'
         type: choice
         options:
-          - dev
+          - update
+          - build
 
 jobs:
   # ---------------------------------------------------------------------------
-  # JOB 1: Build y publicación en Expo EAS
+  # JOB 1: Actualización OTA automática
+  # Se ejecuta en cada merge a main
+  # El usuario recibe la actualización sin reinstalar la app
   # ---------------------------------------------------------------------------
-  expo-deploy:
-    name: Expo Deploy
+  update:
+    name: EAS Update (OTA)
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
+    if: github.event_name == 'push' || github.event.inputs.job == 'update'
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Publicar actualización OTA
+        run: eas update --auto --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
+
+  # ---------------------------------------------------------------------------
+  # JOB 2: Compilación de APK
+  # Solo se ejecuta manualmente cuando hay cambios nativos
+  # ---------------------------------------------------------------------------
+  build:
+    name: EAS Build (APK)
+    runs-on: ubuntu-latest
+    if: github.event.inputs.job == 'build'
 
     steps:
       - name: Checkout código
@@ -43,8 +79,8 @@ jobs:
       - name: Instalar EAS CLI
         run: npm install -g eas-cli
 
-      - name: Publicar update en Expo EAS
-        run: eas update --auto
+      - name: Compilar APK preview
+        run: eas build --platform android --profile preview --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}

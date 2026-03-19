@@ -61,7 +61,9 @@ export default function DownloadScreen() {
           setMp3Url(data.url);
         } else if (data.status === "error") {
           setStatus("error");
-          setMessage(data.message || "Error desconocido");
+         setMessage(data.message || "Error desconocido");
+        } else if (data.status === "not_found") {
+          setMessage("Iniciando servidor de descarga...\nEsto puede tardar hasta 2 minutos la primera vez.");
         } else {
           setMessage("Procesando audio...");
         }
