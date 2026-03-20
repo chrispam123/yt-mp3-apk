@@ -92,8 +92,8 @@ export default function DownloadScreen() {
     <View style={styles.container}>
 
       {/* Título */}
-      <Text style={styles.title}>YT MP3 Downloader</Text>
-      <Text style={styles.subtitle}>Convierte YouTube a MP3</Text>
+      <Text style={styles.title}>MP3 Descargas</Text>
+      <Text style={styles.subtitle}>Convierte YouTubeMP3</Text>
       <Text style={styles.welcome}>¡Bienvenido! Pega una URL de YouTube y descarga tu MP3 gratis.</Text>
 
       {/* Estado: idle */}
